@@ -1,5 +1,5 @@
 <?
-$data = file_get_contents("data.json");
+$data = file_get_contents(__DIR__ .'/data.json');
 $decode_data = json_decode($data, true);
 ?>
 
