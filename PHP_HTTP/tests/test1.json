@@ -1,0 +1,43 @@
+{
+	"title" : "Вопросы",
+	"questions" : [
+		{
+			"question" : "Выберите ПРОСТОЕ число",
+			"answers" : [
+				{
+					"text" : "3",
+					"result" : true
+				},
+				{
+					"text" : "6"
+				},
+				{
+					"text" : "11",
+					"result" : true
+				},
+				{
+					"text" : "10"
+				}
+	 		]
+		},
+		{
+			"question" : "Выбери 6",
+			"answers" : [
+				{
+					"text" : "3"
+				},
+				{
+					"text" : "6",
+					"result" : true
+				},
+				{
+					"text" : "11"
+				},
+				{
+					"text" : "10"
+				}
+	 		]
+		}
+	]
+	
+}
