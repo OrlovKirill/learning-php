@@ -2,7 +2,7 @@
 $id = (int)$_GET['id'];
 
 if (!file_exists(__DIR__.'/tests/test'.$id.'.json')){
-	header("HTTP/1.0 404 Not Found");
+	header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
 	exit();
 };
 
@@ -32,9 +32,9 @@ if (isset($_POST['checkTest'])){
 	}
 	if ($correctAnswers == count($decode_file['questions'])){
 		// $result = 'All answers are right';
-        $img = imagecreatefrompng(__DIR__.'\sertificates\cover.png');
+        $img = imagecreatefrompng(__DIR__.'/sertificates/cover.png');
      	$textColor = imagecolorallocate($img, 0, 0, 0);
-        imagettftext($img, 40, 0, 150, 350, $textColor, __DIR__.'\fonts\arial.ttf', $name.' successfully passed test N'.$id);
+        imagettftext($img, 40, 0, 150, 350, $textColor, __DIR__.'/fonts/arial.ttf', $name.' successfully passed test N'.$id);
 		header('Content-type: image/png');
         imagePng($img);
         imagedestroy($img);
