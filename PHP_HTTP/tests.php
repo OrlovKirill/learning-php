@@ -1,4 +1,4 @@
-<? 
+<?php 
 $id = (int)$_GET['id'];
 
 if (!file_exists(__DIR__.'/tests/test'.$id.'.json')){
@@ -19,7 +19,7 @@ if (isset($_POST['checkTest'])){
  	foreach ($decode_file['questions'] as $key => $question) {
  		$arAnswers[$key] = array();
 		foreach ($question['answers'] as $answer) {
-			if ($answer['result']){
+			if (!empty($answer['result']){
 				$arAnswers[$key][] = $answer['text'];
 			}
 		}
@@ -61,7 +61,7 @@ if (isset($_POST['checkTest'])){
 				<legend style="margin-bottom: 15px; font-weight: 700;"><?=$question['question']?><br>
 					<?php foreach ($question['answers'] as $answer):?>
 						<label style="font-weight: 500; "><input type="checkbox" name="question_<?=$qNumber;?>[]" value="<?=$answer['text'];?>"style="margin-right:  15px; margin-top: 10px;"><?=$answer['text'];?></label>
-					<? endforeach; ?>
+					<?php endforeach; ?>
 				</legend>
 			<?php endforeach; ?>
 			<input type="submit" name="checkTest" value="Проверить ответы" style="margin-top:10px; font-weight: 700;">
