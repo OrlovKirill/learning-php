@@ -1,4 +1,5 @@
 <?
+
 	function getData($pdo, $select, $from, $condition= array()){
 		if (is_array($select))
 		{
@@ -14,9 +15,20 @@
 		}
 		$data = $pdo->prepare($sql);
 		$data->execute();
-		$data = $data->fetchAll();
+		// $data = $data->fetchAll();
 		return $data;
 	}
+
+function getPdo($login, $pass, $server, $db){		
+	try{
+		$pdo = new PDO("mysql:host=$server;dbname=$db;charset=utf8", $login, $pass, [
+	        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+	    ]);	
+	}	catch (PDOException $e) {
+	    	die($e->getMessage());
+	}
+	return $pdo;
+}
 
 	// function registr($pdo, $insert, $values){
 	// 	if (is_array($values)){

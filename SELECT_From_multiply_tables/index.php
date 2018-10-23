@@ -2,14 +2,7 @@
 include "config.php";
 include "functions.php";
 session_start();
-
-try{
-	$pdo = new PDO("mysql:host=$server;dbname=$db;charset=utf8", $login, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-    ]);	
-}	catch (PDOException $e) {
-    	die($e->getMessage());
-}
+$pdo = getPdo($login, $pass, $server, $db);
 
 	// $sql = "SELECT * FROM user";
 	// $data = $pdo->prepare($sql);
@@ -31,9 +24,10 @@ try{
 		$data = getData($pdo,array('login', 'password'),'user', array('login =\''.addslashes($_POST['login']).'\'', 'password =\''.md5(addslashes($_POST['password'])).'\''));
 		if(!empty($data)){	
 			$id = getData($pdo, 'id','user','login =\''.addslashes($_POST['login']).'\'');
-			
-			 // $_SESSION['user'] = $_POST['login'];
-			// header('Location: main.php');//sessiya proidena 
+			$result = $id->fetch(PDO::FETCH_ASSOC);
+			$_SESSION['user'] = $_POST['login'];
+			$_SESSION['id'] = $result['id'];
+			header('Location: main.php');//sessiya proidena 
 		}
 		else{
 			echo 'Такого логина или пароля не существует';
@@ -42,6 +36,7 @@ try{
 
 	if(!empty($_POST['register'])){
 		$data = getData($pdo,array('login', 'password'),'user', 'login =\''.addslashes($_POST['login']).'\'');
+		$data = $data->fetchAll();
 		if(!empty($data)){
 			echo 'такой логин уже существует';
 		}
@@ -49,6 +44,7 @@ try{
 			// $data = registr($pdo,'user (login, password)', array('\''.addslashes($_POST['login']).'\'', '\''.md5(addslashes($_POST['password'])).'\''));
 			$sql="INSERT INTO `user` (login, password) VALUES ('".addslashes($_POST['login'])."', '".md5(addslashes($_POST['password']))."')";
 			$data = $pdo->prepare($sql);
+			// $sql = $sql->fetchAll();
 			$data->execute();
 			echo 'Вы зарегистрировались с именем '.$_POST['login'].'. Теперь вы можете войти под вашим логином';
 				// if(!empty($data)){
