@@ -15,16 +15,12 @@ table th {
 	font-weight:bold;
 	padding:21px 25px 22px 25px;
 	border-top:1px solid #fafafa;
-	border-bottom:1px solid #e0e0e0;
-
-	
+	border-bottom:1px solid #e0e0e0;	
 }
 table th:first-child{
 	text-align: left;
 	padding-left:20px;
 }
-
-
 
 table tr{
 	text-align: center;
@@ -40,7 +36,6 @@ table tr td {
 	border-top: 1px solid #ffffff;
 	border-bottom:1px solid #e0e0e0;
 	border-left: 1px solid #e0e0e0;
- 
 	background: #fafafa;
 
 }
@@ -53,5 +48,4 @@ table tr:last-child td{
 
 table tr:hover td{
 	background: #f2f2f2;
-
 }

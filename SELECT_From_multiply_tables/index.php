@@ -20,19 +20,26 @@ $pdo = getPdo($login, $pass, $server, $db);
 	// 	}
 
 
-	if (!empty($_POST['enter'])){
+	if (!empty($_POST['enter'])){		
 		$data = getData($pdo,array('login', 'password'),'user', array('login =\''.addslashes($_POST['login']).'\'', 'password =\''.md5(addslashes($_POST['password'])).'\''));
+		$data = $data->fetch(PDO::FETCH_ASSOC);
+		
+
 		if(!empty($data)){	
 			$id = getData($pdo, 'id','user','login =\''.addslashes($_POST['login']).'\'');
 			$result = $id->fetch(PDO::FETCH_ASSOC);
 			$_SESSION['user'] = $_POST['login'];
 			$_SESSION['id'] = $result['id'];
 			header('Location: main.php');//sessiya proidena 
+			//добавить вывод пароля из sql и его проверку с введенным
 		}
 		else{
 			echo 'Такого логина или пароля не существует';
 		}
-	}	
+	}
+
+
+
 
 	if(!empty($_POST['register'])){
 		$data = getData($pdo,array('login', 'password'),'user', 'login =\''.addslashes($_POST['login']).'\'');

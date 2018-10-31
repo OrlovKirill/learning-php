@@ -1,8 +1,23 @@
 <?
 include "config.php";
 include "functions.php";
+//Массив сортировки по значению
+$arMapping = [
+	'dateCreated' => 'date_added',
+	'isDone' => 'is_done',
+	'taskDescription' => 'description'
+];
+//массив сортировки по типу
+$arSortType = [
+	'asc' => 'asc',
+	'desc' => 'desc'
+];
+
+
 session_start();
 $pdo = getPdo($login, $pass, $server, $db);
+
+
 
 if (!isset($_SESSION['user'])){
     http_response_code(403);
@@ -12,12 +27,36 @@ if (!isset($_SESSION['user'])){
 }
 // echo($_SESSION['id']);
 // echo($_SESSION['user']);
+
+// ДОБАВЛЕНИЕ ДЕЛА
 	if(!empty($_POST['add'])){
 	$description = $_POST['description'];
 	$sql = "INSERT INTO task (user_id, assigned_user_id, description, is_done, date_added) VALUES (?, ?, ?, ?, now())";
 	$add = $pdo->prepare($sql);
 	$add->execute([$_SESSION['id'], $_SESSION['id'], $description, false]);
 	header('Location: main.php');
+}
+
+//Сортировка
+if (!empty($_POST['sort'])){
+	// if ($_POST['sortBy'] == 'dateCreated'){
+		// $sqlQuery = sortBy($pdo,array('*', 'user.login'), 'task', 'user', 'user.id=task.user_id', 'user.id='.$_SESSION['id'], 'description');
+		$sqlQuery = "SELECT description, date_added, is_done, assigned_user_id, user_id, user.login, u2.login as assigned_login FROM task LEFT JOIN user ON user.id=task.user_id LEFT JOIN user as u2 ON u2.id=task.assigned_user_id WHERE user_id =".$_SESSION['id'];
+		if (isset($arMapping[$_POST['sortBy']])){
+			$sqlQuery.=" ORDER BY ".$arMapping[$_POST['sortBy']];
+			if(isset($arSortType[$_POST['sortType']])){
+				$sqlQuery.= " ".$arSortType[$_POST['sortType']];
+			}
+		}
+
+		$data = $pdo->prepare($sqlQuery);
+		$data->execute();
+}
+//При первом входе выборка всего
+else{
+	$sql = "SELECT description, date_added, is_done, assigned_user_id, user_id, user.login, u2.login as assigned_login FROM task LEFT JOIN user ON user.id=task.user_id LEFT JOIN user as u2 ON u2.id=task.assigned_user_id WHERE user_id =".$_SESSION['id'];
+	$data = $pdo->prepare($sql);
+		$data->execute();
 }
 // $description = $_POST['description'];
 // 	$id = getData($pdo, 'login','user','id =\''.addslashes($_SESSION['id']).'\'');
@@ -46,11 +85,15 @@ if (!isset($_SESSION['user'])){
 
 	<div style="float: left; margin-bottom: 20px">
 		<form method="POST">
-			<label for="sort">Сортировать по:</label>
-				<select name="sortBy">
-					<option value="dataCreated">дате добавления</option>
-					<option value="isDone">статусу</option>
-					<option value="description">описанию</option>
+			<label for="sortBy">Сортировать по:</label>
+				<select name="sortBy" id="sortBy">
+					<option <?=($_POST['sortBy']=='dateCreated') ? 'selected="selected"' : '' ?> value="dateCreated">дате добавления</option>
+					<option <?=($_POST['sortBy']=='isDone') ? 'selected="selected"' : '' ?>  value="isDone">статусу</option>
+					<option <?=($_POST['sortBy']=='taskDescription') ? 'selected="selected"' : '' ?> value="taskDescription">описанию</option>
+				</select>
+				<select name="sortType">
+					<option <?=($_POST['sortType']=='desc') ? 'selected="selected"' : '' ?> value="desc">по возрастанию</option>
+					<option <?=($_POST['sortType']=='asc') ? 'selected="selected"' : '' ?>value="asc">по убыванию</option>
 				</select>
 			<input type="submit" name="sort" value="Отсортировать">
 		</form>
@@ -66,12 +109,7 @@ if (!isset($_SESSION['user'])){
 				<th>Автор</th>
 				<!-- <th>Закрепить задачу за пользователем</th> -->
 			</tr>
-			<?php 
-				$sql = "SELECT description, date_added, is_done, assigned_user_id, user_id, user.login, u2.login as assigned_login FROM task LEFT JOIN user ON user.id=task.user_id LEFT JOIN user as u2 ON u2.id=task.assigned_user_id WHERE user_id =".$_SESSION['id'];
-				$data = $pdo->prepare($sql);
-				$data->execute();
-		
-			?>
+
 			<?foreach ($data as $row): ?>	
 			<tr>
 				<td><?= $row['description']; ?></td>
@@ -81,7 +119,7 @@ if (!isset($_SESSION['user'])){
 		            if ($row['is_done'] == 1) {
 		                echo '<span style="color: green">Выполнено</span>';
 		            } elseif ($row['is_done'] == 0) {
-		                echo '<span style="color: red">Выполнить</span>';
+		                echo '<span style="color: red">Не Выполнено</span>';
 		            }
 		           	?>
 		        </td>
